@@ -1,0 +1,6 @@
+{
+  "name": "designpick",
+  "scripts": {
+    "dev": "bun run server.ts"
+  }
+}

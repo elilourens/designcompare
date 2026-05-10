@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in – DesignPick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div></div>
+    <a href="index.html" class="nav-logo">DesignPick<span style="color:var(--pink-ink)">.com</span></a>
+    <div></div>
+  </nav>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <p class="auth-card-title display">Welcome back</p>
+      <p class="auth-card-sub">Sign in to upload and manage comparisons</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">sign in</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">sign up</button>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <label>email
+          <input type="email" id="login-email" required autocomplete="email">
+        </label>
+        <label>password
+          <input type="password" id="login-password" required autocomplete="current-password">
+        </label>
+        <button type="submit" class="btn-primary">sign in</button>
+        <p id="login-error" class="form-error hidden"></p>
+      </form>
+
+      <form id="signup-form" class="hidden" onsubmit="handleSignup(event)">
+        <label>username
+          <input type="text" id="signup-username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+">
+        </label>
+        <label>email
+          <input type="email" id="signup-email" required autocomplete="email">
+        </label>
+        <label>password
+          <input type="password" id="signup-password" required minlength="6" autocomplete="new-password">
+        </label>
+        <button type="submit" class="btn-primary">create account</button>
+        <p id="signup-error" class="form-error hidden"></p>
+        <p id="signup-success" class="form-success hidden">Check your email to confirm your account.</p>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="parallax.js"></script>
+</body>
+</html>

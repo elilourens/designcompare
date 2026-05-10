@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DesignPick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div></div>
+    <a href="index.html" class="nav-logo">DesignPick<span style="color:var(--pink-ink)">.com</span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" id="dashboard-link" class="nav-link hidden">Dashboard</a>
+      <a href="upload.html" id="upload-link" class="nav-link hidden">Upload</a>
+      <a href="login.html" id="login-link" class="nav-link-text">Sign in</a>
+      <button id="logout-btn" class="nav-link hidden">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="cta-banner" id="cta-banner">
+    <span class="cta-banner-text">Test your designs <span class="cta-now"><span class="cta-now-text">right now</span><span class="cta-now-highlight"></span></span></span>
+    <a href="upload.html" class="cta-banner-btn">add your designs</a>
+    <button class="cta-close" onclick="document.getElementById('cta-banner').style.display='none'" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <main class="compare-main">
+    <div id="loading" class="state-center">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="done" class="state-center hidden">
+      <h2>You've seen everything</h2>
+      <p>Check back later for new comparisons</p>
+    </div>
+
+    <div id="compare-view" class="hidden">
+      <p class="compare-hint">Which design do you <em style="color:var(--emerald);font-style:italic;">prefer?</em></p>
+      <div class="designs-grid">
+        <button class="design-card" id="card-a" onclick="vote('a')">
+          <img id="img-a" src="" alt="Design A">
+          <div class="design-label">a</div>
+        </button>
+        <button class="design-card" id="card-b" onclick="vote('b')">
+          <img id="img-b" src="" alt="Design B">
+          <div class="design-label">b</div>
+        </button>
+      </div>
+      <p class="design-title" id="design-title"></p>
+    </div>
+
+    <div id="voted-view" class="state-center hidden">
+      <div class="voted-result">
+        <h2>You picked <em id="voted-choice" style="color:var(--emerald);font-style:italic;"></em></h2>
+        <div class="vote-bars">
+          <div class="vote-bar-row">
+            <span>a</span>
+            <div class="bar-track"><div class="bar-fill" id="bar-a"></div></div>
+            <span id="pct-a">0%</span>
+          </div>
+          <div class="vote-bar-row">
+            <span>b</span>
+            <div class="bar-track"><div class="bar-fill" id="bar-b"></div></div>
+            <span id="pct-b">0%</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="next()">next &rarr;</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+  <script type="module" src="parallax.js"></script>
+</body>
+</html>

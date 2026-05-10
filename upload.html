@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload – DesignPick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div></div>
+    <a href="index.html" class="nav-logo">DesignPick<span style="color:var(--pink-ink)">.com</span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <button id="logout-btn" class="nav-link">sign out</button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-hero-left">
+        <span class="page-hero-numeral">II.</span>
+        <div class="page-hero-rule"></div>
+        <span class="page-hero-label">New comparison</span>
+      </div>
+      <div class="page-hero-right">
+        <h1 class="page-hero-heading">Upload. Share.<br><em class="page-hero-em">Let the crowd decide.</em></h1>
+      </div>
+    </div>
+  </div>
+
+  <main class="upload-main">
+
+    <form id="upload-form" onsubmit="handleUpload(event)">
+      <label>title
+        <input type="text" id="title" required maxlength="100" placeholder="e.g. Homepage redesign">
+      </label>
+      <label>description <span class="optional">(optional)</span>
+        <textarea id="description" rows="2" maxlength="300" placeholder="What are you testing?"></textarea>
+      </label>
+
+      <div class="upload-row">
+        <div class="upload-slot">
+          <p class="slot-label">design a</p>
+          <div class="drop-zone" id="drop-a" onclick="document.getElementById('file-a').click()">
+            <img id="preview-a" class="hidden" alt="Preview A">
+            <span id="drop-hint-a">click to select image</span>
+          </div>
+          <input type="file" id="file-a" accept="image/*" class="hidden" onchange="previewFile('a')">
+        </div>
+        <div class="upload-slot">
+          <p class="slot-label">design b</p>
+          <div class="drop-zone" id="drop-b" onclick="document.getElementById('file-b').click()">
+            <img id="preview-b" class="hidden" alt="Preview B">
+            <span id="drop-hint-b">click to select image</span>
+          </div>
+          <input type="file" id="file-b" accept="image/*" class="hidden" onchange="previewFile('b')">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submit-btn">publish comparison</button>
+      <p id="upload-error" class="form-error hidden"></p>
+      <p id="upload-success" class="form-success hidden"></p>
+    </form>
+
+    <section class="my-designs">
+      <h2>Your comparisons</h2>
+      <div class="my-designs-rule"></div>
+      <div id="my-list" class="my-list">
+        <div class="spinner"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Paywall modal -->
+  <div id="paywall-modal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">You've used your 3 free uploads</h2>
+      <p class="modal-body">Each additional comparison is <strong>£9.99</strong> — pay once, publish once. No subscription.</p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="paywall-pay-btn">Pay £9.99 to publish</button>
+        <button class="btn-ghost" onclick="document.getElementById('paywall-modal').classList.add('hidden')">Maybe later</button>
+      </div>
+      <p class="modal-note">Payments coming soon — get in touch at <a href="mailto:hello@designpick.com">hello@designpick.com</a> to get early access.</p>
+    </div>
+  </div>
+
+  <script type="module" src="upload.js"></script>
+  <script type="module" src="parallax.js"></script>
+</body>
+</html>

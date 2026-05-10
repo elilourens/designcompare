@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – DesignPick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div></div>
+    <a href="index.html" class="nav-logo">DesignPick<span style="color:var(--pink-ink)">.com</span></a>
+    <div class="nav-links">
+      <a href="upload.html" class="nav-link">Upload</a>
+      <button id="logout-btn" class="nav-link">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-hero-left">
+        <span class="page-hero-numeral">I.</span>
+        <div class="page-hero-rule"></div>
+        <span class="page-hero-label">Your dashboard</span>
+      </div>
+      <div class="page-hero-right">
+        <h1 class="page-hero-heading">Your comparisons.<br><em class="page-hero-em">See how people vote.</em></h1>
+      </div>
+    </div>
+  </div>
+
+  <main class="dash-main">
+
+    <div id="dash-loading" class="state-center">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="dash-empty" class="state-center hidden">
+      <h2>No comparisons yet</h2>
+      <p>Upload your first design pair to get started</p>
+      <a href="upload.html" class="btn-primary" style="max-width:240px;text-decoration:none;margin-top:8px;">Upload designs</a>
+    </div>
+
+    <div id="dash-list" class="dash-list hidden"></div>
+  </main>
+
+  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="parallax.js"></script>
+</body>
+</html>

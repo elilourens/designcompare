@@ -41,4 +41,4 @@ Bun.serve({
   },
 })
 
-console.log(`DesignPick running at http://localhost:${PORT}`)
+console.log(`DesignVoter running at http://localhost:${PORT}`)

@@ -72,6 +72,14 @@ async function loadNext() {
   $('img-b').src = design.image_b_url
   $('design-title').textContent = design.title
 
+  $('inline-bar-a').classList.add('hidden')
+  $('inline-bar-b').classList.add('hidden')
+  $('card-a').disabled = false
+  $('card-b').disabled = false
+  $('card-a').classList.remove('voted-card', 'other-card')
+  $('card-b').classList.remove('voted-card', 'other-card')
+
+  window.triggerGridReveal?.()
   show('compare-view')
 }
 
@@ -102,19 +110,37 @@ window.vote = async function(choice) {
   const pctA = total ? Math.round((countA / total) * 100) : 50
   const pctB = 100 - pctA
 
-  $('voted-choice').textContent = choice.toUpperCase()
-  $('bar-a').style.width = pctA + '%'
-  $('bar-b').style.width = pctB + '%'
+  // Lighbox: expand chosen card, dim backdrop, shrink other
+  const chosenCard = $('card-' + choice)
+  const otherCard  = $('card-' + (choice === 'a' ? 'b' : 'a'))
+  chosenCard.classList.add('voted-card')
+  otherCard.classList.add('other-card')
+
+  // Show bars beneath each card
+  $('bar-a').style.width = '0%'
+  $('bar-b').style.width = '0%'
   $('pct-a').textContent = pctA + '%'
   $('pct-b').textContent = pctB + '%'
+  $('inline-bar-a').classList.remove('hidden')
+  $('inline-bar-b').classList.remove('hidden')
 
-  show('voted-view')
+  // Animate bars in after a tick so transition fires
+  requestAnimationFrame(() => {
+    $('bar-a').style.width = pctA + '%'
+    $('bar-b').style.width = pctB + '%'
+  })
+
+  // Disable cards while showing results
+  $('card-a').disabled = true
+  $('card-b').disabled = true
+
+  setTimeout(next, 3000)
 }
 
 window.next = loadNext
 
 function show(id) {
-  for (const el of document.querySelectorAll('.state-center, #compare-view, #voted-view')) {
+  for (const el of document.querySelectorAll('.state-center, #compare-view, #voted-view, #loading')) {
     el.classList.add('hidden')
   }
   $(id).classList.remove('hidden')

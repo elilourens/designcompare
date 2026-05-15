@@ -72,12 +72,10 @@ async function loadDashboard(userId) {
         <div class="dash-images">
           <div class="dash-img-wrap ${winner === 'a' ? 'dash-img-winner' : ''}">
             <img src="${d.image_a_url}" alt="Design A" loading="lazy">
-            <span class="design-label">a</span>
             ${winner === 'a' ? '<span class="winner-badge">winner</span>' : ''}
           </div>
           <div class="dash-img-wrap ${winner === 'b' ? 'dash-img-winner' : ''}">
             <img src="${d.image_b_url}" alt="Design B" loading="lazy">
-            <span class="design-label">b</span>
             ${winner === 'b' ? '<span class="winner-badge">winner</span>' : ''}
           </div>
         </div>

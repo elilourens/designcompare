@@ -113,6 +113,33 @@ window.handleUpload = async function(e) {
       uploadFile(fileB, 'b'),
     ])
 
+    // Moderate content before publishing
+    btn.textContent = 'Checking content…'
+    const { data: { session } } = await supabase.auth.getSession()
+    const modRes = await fetch(
+      'https://udvhekbkkbhktjldgydw.supabase.co/functions/v1/validate-upload',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageAUrl: urlA, imageBUrl: urlB, title, description }),
+      }
+    )
+    const mod = await modRes.json()
+    if (!mod.approved) {
+      // Remove uploaded files since we're rejecting
+      await Promise.allSettled([
+        supabase.storage.from('designs').remove([urlA.split('/designs/')[1]]),
+        supabase.storage.from('designs').remove([urlB.split('/designs/')[1]]),
+      ])
+      showError('upload-error', `Upload rejected: ${mod.reason ?? 'Content policy violation.'}`)
+      btn.disabled = false
+      btn.textContent = 'Publish comparison'
+      return
+    }
+
     const { error } = await supabase.from('designs').insert({
       owner_id: currentUser.id,
       title,

@@ -463,6 +463,7 @@ body > * { position: relative; z-index: 3; }
   line-height: 1.15;
   max-width: 100%;
   box-sizing: border-box;
+  box-shadow: 4px 4px 0 var(--pink-ink);
 }
 
 .compare-hint-question {
@@ -683,17 +684,28 @@ body > * { position: relative; z-index: 3; }
 
 .design-title-badge {
   display: table;
-  margin: 16px auto 0;
-  background: var(--emerald);
-  color: #fff;
+  margin: 24px auto 0;
+  background: var(--pink);
+  color: var(--forest-ink);
   font-family: 'Onest', sans-serif;
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-  padding: 9px 24px;
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: -.01em;
+  padding: 16px 40px 12px;
   border-radius: var(--radius-pill);
   text-align: center;
+  border-bottom: 5px solid var(--emerald);
+}
+
+.title-quote {
+  font-family: 'Playfair', Georgia, serif;
+  font-style: italic;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--emerald);
+  line-height: 0;
+  vertical-align: -0.1em;
+  margin: 0 0.35em;
 }
 
 /* VOTED STATE */

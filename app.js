@@ -67,7 +67,7 @@ async function loadById(id) {
 
   $('img-a').src = design.image_a_url
   $('img-b').src = design.image_b_url
-  $('design-title').textContent = design.title
+  $('design-title').innerHTML = `<span class="title-quote">“</span>${design.title}<span class="title-quote">”</span>`
 
   $('inline-bar-a').classList.add('hidden')
   $('inline-bar-b').classList.add('hidden')
@@ -106,7 +106,7 @@ async function loadNext() {
 
   $('img-a').src = design.image_a_url
   $('img-b').src = design.image_b_url
-  $('design-title').textContent = design.title
+  $('design-title').innerHTML = `<span class="title-quote">“</span>${design.title}<span class="title-quote">”</span>`
 
   $('inline-bar-a').classList.add('hidden')
   $('inline-bar-b').classList.add('hidden')

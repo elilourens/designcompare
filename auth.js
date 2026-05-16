@@ -34,7 +34,10 @@ window.handleLogin = async function(e) {
 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) {
-    showError('login-error', error.message)
+    const msg = error.message.toLowerCase().includes('invalid') || error.status === 400
+      ? 'Incorrect email or password. Please try again.'
+      : error.message
+    showError('login-error', msg)
   } else {
     window.location.href = 'upload.html'
   }

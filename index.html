@@ -78,6 +78,7 @@
             </span>
           </button>
         </div>
+        <div class="designs-grid-or">or</div>
         <div class="design-card-wrap">
           <div class="design-letter">B</div>
           <button class="design-card" id="card-b" onclick="vote('b')">
@@ -102,11 +103,16 @@
     function openZoom(imgId, e) {
       e.stopPropagation()
       const src = document.getElementById(imgId).src
-      document.getElementById('zoom-img').src = src
-      document.getElementById('zoom-overlay').classList.add('active')
+      const zoomImg = document.getElementById('zoom-img')
+      const overlay = document.getElementById('zoom-overlay')
+      zoomImg.src = ''
+      zoomImg.src = src
+      overlay.classList.add('active')
     }
     function closeZoom() {
-      document.getElementById('zoom-overlay').classList.remove('active')
+      const overlay = document.getElementById('zoom-overlay')
+      overlay.classList.remove('active')
+      document.getElementById('zoom-img').src = ''
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom() })
   </script>

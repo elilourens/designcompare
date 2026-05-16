@@ -41,7 +41,43 @@ async function init() {
     window.location.reload()
   })
 
-  await loadNext()
+  const sharedId = new URLSearchParams(window.location.search).get('id')
+  if (sharedId) {
+    await loadById(sharedId)
+  } else {
+    await loadNext()
+  }
+}
+
+async function loadById(id) {
+  show('loading')
+
+  const { data: design, error } = await supabase
+    .from('designs')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error || !design) {
+    show('done')
+    return
+  }
+
+  currentDesign = design
+
+  $('img-a').src = design.image_a_url
+  $('img-b').src = design.image_b_url
+  $('design-title').textContent = design.title
+
+  $('inline-bar-a').classList.add('hidden')
+  $('inline-bar-b').classList.add('hidden')
+  $('card-a').disabled = false
+  $('card-b').disabled = false
+  $('card-a').classList.remove('voted-card', 'other-card')
+  $('card-b').classList.remove('voted-card', 'other-card')
+
+  window.triggerGridReveal?.()
+  show('compare-view')
 }
 
 async function loadNext() {
@@ -134,7 +170,12 @@ window.vote = async function(choice) {
   $('card-a').disabled = true
   $('card-b').disabled = true
 
-  setTimeout(next, 3000)
+  const isSharedLink = new URLSearchParams(window.location.search).has('id')
+  if (isSharedLink) {
+    setTimeout(() => { window.location.href = '/' }, 3000)
+  } else {
+    setTimeout(next, 3000)
+  }
 }
 
 window.next = loadNext

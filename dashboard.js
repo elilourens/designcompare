@@ -63,6 +63,9 @@ async function loadDashboard(userId) {
           <div class="dash-card-meta">
             <span class="badge ${d.is_active ? 'badge-active' : 'badge-inactive'}">${d.is_active ? 'active' : 'paused'}</span>
             <span class="dash-total">${total} vote${total !== 1 ? 's' : ''}</span>
+            <button class="btn-ghost btn-sm" onclick="copyShareLink('${d.id}', this)">
+              Copy link
+            </button>
             <button class="btn-ghost btn-sm" onclick="toggleActive('${d.id}', ${d.is_active})">
               ${d.is_active ? 'Pause' : 'Resume'}
             </button>
@@ -99,6 +102,15 @@ async function loadDashboard(userId) {
   }).join('')
 
   list.classList.remove('hidden')
+}
+
+window.copyShareLink = function(id, btn) {
+  const url = `${location.origin}${location.pathname}?id=${id}`.replace(/dashboard\.html/, '')
+  navigator.clipboard.writeText(url).then(() => {
+    const original = btn.textContent
+    btn.textContent = 'Copied!'
+    setTimeout(() => { btn.textContent = original }, 2000)
+  })
 }
 
 window.toggleActive = async function(id, current) {

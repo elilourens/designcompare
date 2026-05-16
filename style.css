@@ -685,6 +685,51 @@ body > * { position: relative; z-index: 3; }
 
 .voted-result .btn-primary { max-width: 220px; }
 
+/* GOOGLE BUTTON */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-pill);
+  padding: 13px 24px;
+  font-family: 'Onest', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--forest-ink);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 2px 2px 0 var(--pink);
+}
+
+.btn-google:hover {
+  border-color: var(--rule);
+  box-shadow: 4px 4px 0 var(--pink);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--rule);
+  font-family: 'Onest', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule-soft);
+}
+
 /* AUTH PAGE */
 .auth-main {
   display: flex;

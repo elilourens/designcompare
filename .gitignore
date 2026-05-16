@@ -1,9 +1,10 @@
 # Dependencies
 node_modules/
 
-# Bun
+# Bun (local dev server only — not needed on Vercel)
 bun.lockb
 .bun/
+server.ts
 
 # Environment / secrets
 .env

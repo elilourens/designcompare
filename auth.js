@@ -2,10 +2,22 @@ import { supabase } from './supabase.js'
 
 const $ = id => document.getElementById(id)
 
-// Redirect if already logged in
+// Handle OAuth redirect callback and existing session
 supabase.auth.getSession().then(({ data: { session } }) => {
   if (session) window.location.href = 'upload.html'
 })
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) window.location.href = 'upload.html'
+})
+
+window.handleGoogleSignIn = async function() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/upload.html' },
+  })
+  if (error) alert(error.message)
+}
 
 window.switchTab = function(tab) {
   const isLogin = tab === 'login'

@@ -2,5 +2,8 @@
   "name": "designvoter",
   "scripts": {
     "dev": "bun run server.ts"
+  },
+  "dependencies": {
+    "@sanity/client": "^7.22.0"
   }
 }

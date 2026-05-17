@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — DesignVoter</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FFB9E5'/></svg>">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .blog-hero {
+      padding: calc(var(--nav-h) + 3rem) 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .blog-hero h1 {
+      font-family: 'Onest', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+
+    .blog-hero p {
+      margin-top: .75rem;
+      color: var(--emerald);
+      font-size: 1rem;
+    }
+
+    .blog-grid {
+      max-width: 720px;
+      margin: 2.5rem auto 5rem;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .post-card {
+      background: #fff;
+      border: 1px solid var(--rule-soft);
+      border-radius: var(--radius-card);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      overflow: hidden;
+      transition: box-shadow .15s, transform .15s;
+      box-shadow: 0 2px 12px var(--paper-shadow), 4px 4px 0 var(--pink);
+    }
+
+    .post-card:hover {
+      box-shadow: 0 6px 24px var(--paper-shadow), 6px 6px 0 var(--pink-ink);
+      transform: translateY(-2px);
+    }
+
+    .post-card-thumb {
+      width: 120px;
+      min-width: 120px;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      background: var(--cream-2);
+    }
+
+    .post-card-thumb-placeholder {
+      width: 120px;
+      min-width: 120px;
+      height: 120px;
+      background: var(--cream-2);
+    }
+
+    .post-card-body {
+      padding: 1.25rem 1.5rem 1.25rem 0;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-date {
+      font-family: 'Onest', sans-serif;
+      font-size: .75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--pink-ink);
+      margin-bottom: .5rem;
+    }
+
+    .post-title {
+      font-family: 'Onest', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      line-height: 1.25;
+    }
+
+    .post-excerpt {
+      margin-top: .6rem;
+      font-size: .95rem;
+      color: rgba(10,72,0,.65);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-read-more {
+      display: inline-block;
+      margin-top: 1rem;
+      font-family: 'Onest', sans-serif;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--emerald);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .load-more-btn {
+      display: block;
+      width: 100%;
+      padding: .9rem;
+      background: #fff;
+      border: 1px solid var(--rule-soft);
+      border-radius: var(--radius-card);
+      font-family: 'Onest', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--emerald);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px var(--paper-shadow);
+      transition: box-shadow .15s, transform .15s;
+    }
+
+    .load-more-btn:hover {
+      box-shadow: 0 6px 24px var(--paper-shadow);
+      transform: translateY(-2px);
+    }
+
+    .blog-empty {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      color: rgba(10,72,0,.45);
+      font-size: .95rem;
+    }
+
+    .blog-loading {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .skeleton-post {
+      background: #fff;
+      border: 1px solid var(--rule-soft);
+      border-radius: var(--radius-card);
+      padding: 1.75rem 2rem;
+    }
+
+    .skeleton-post .skeleton-line {
+      height: 1rem;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--cream-2) 25%, #ece9df 50%, var(--cream-2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      margin-bottom: .75rem;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0 }
+      100% { background-position: -200% 0 }
+    }
+
+    /* Post view */
+    .post-view {
+      display: none;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 2rem) 1.5rem 5rem;
+    }
+
+    .post-view.active { display: block; }
+    .blog-list { display: block; }
+    .blog-list.hidden { display: none; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-family: 'Onest', sans-serif;
+      font-size: .8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--emerald);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .post-bubble {
+      background: #fff;
+      border: 1px solid var(--rule-soft);
+      border-radius: var(--radius-card);
+      box-shadow: 0 2px 12px var(--paper-shadow), 4px 4px 0 var(--pink);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-bubble--title {
+      display: table;
+      margin: 0 auto 1rem;
+      background: var(--pink);
+      border-bottom: 5px solid var(--emerald);
+      border-radius: var(--radius-pill);
+      box-shadow: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      padding: 16px 40px 12px;
+      text-align: center;
+    }
+
+    .post-bubble--title .post-bubble-date {
+      font-family: 'Onest', sans-serif;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--forest);
+      margin-bottom: .4rem;
+    }
+
+    .post-bubble--title .post-bubble-title {
+      font-family: 'Onest', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: -.01em;
+      color: var(--forest-ink);
+    }
+
+    .post-bubble-date {
+      font-family: 'Onest', sans-serif;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--forest);
+      margin-bottom: .5rem;
+    }
+
+    .post-bubble-title {
+      font-family: 'Onest', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+      color: var(--forest-ink);
+    }
+
+    .post-bubble p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .post-bubble p + p { margin-top: 1rem; }
+
+    .post-bubble h2 {
+      font-family: 'Onest', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--forest-ink);
+    }
+
+    .post-bubble h3 {
+      font-family: 'Onest', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--forest-ink);
+    }
+
+    .post-bubble--image {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .post-bubble img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .post-bubble strong { font-weight: 700; }
+    .post-bubble em { font-style: italic; }
+
+    /* Inline comparison widget */
+    .comparison-bubble {
+      background: #fff;
+      border: 1px solid var(--rule-soft);
+      border-radius: var(--radius-card);
+      box-shadow: 0 2px 12px var(--paper-shadow), 4px 4px 0 var(--pink);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .comparison-question {
+      font-family: 'Onest', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      color: var(--forest-ink);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .comparison-grid-or {
+      font-family: 'Onest', sans-serif;
+      font-size: .8rem;
+      font-weight: 700;
+      color: rgba(10,72,0,.35);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .comparison-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .comparison-letter {
+      font-family: 'Onest', sans-serif;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--pink-ink);
+    }
+
+    .comparison-btn {
+      width: 100%;
+      border: 2px solid var(--rule-soft);
+      border-radius: calc(var(--radius-card) - 4px);
+      background: var(--cream-2);
+      cursor: pointer;
+      padding: 0;
+      overflow: hidden;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+      position: relative;
+    }
+
+    .comparison-btn:hover:not(:disabled) {
+      border-color: var(--pink-ink);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px var(--paper-shadow);
+    }
+
+    .comparison-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .comparison-bar {
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem .75rem;
+      background: var(--cream-2);
+    }
+
+    .comparison-bar.visible { display: flex; }
+
+    .comparison-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--rule-soft);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .comparison-bar-fill {
+      height: 100%;
+      background: var(--pink-ink);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+
+    .comparison-bar-pct {
+      font-family: 'Onest', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--forest-ink);
+      min-width: 2.5rem;
+      text-align: right;
+    }
+
+    .comparison-voted .comparison-btn.chosen {
+      border-color: var(--pink-ink);
+    }
+
+    /* Inline CTA block */
+    .post-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--pink);
+      border-bottom: 5px solid var(--emerald);
+      border-radius: var(--radius-card);
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-cta-text {
+      font-family: 'Onest', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--forest-ink);
+      letter-spacing: -.01em;
+    }
+
+    .post-cta-btn {
+      flex-shrink: 0;
+      display: inline-block;
+      background: var(--forest-ink);
+      color: #fff;
+      font-family: 'Onest', sans-serif;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: .6rem 1.25rem;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+
+    .post-cta-btn:hover { opacity: .8; }
+
+    @media (max-width: 500px) {
+      .post-cta { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div></div>
+    <a href="index.html" class="nav-logo">DesignVoter<span style="color:var(--pink-ink)">.com</span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" id="dashboard-link" class="nav-link hidden">Dashboard</a>
+      <a href="upload.html" id="upload-link" class="nav-link hidden">Upload</a>
+      <a href="login.html" id="login-link" class="nav-link-text">Sign in</a>
+      <button id="logout-btn" class="nav-link hidden">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="cta-banner" id="cta-banner">
+    <span class="cta-banner-text">Test your designs <span class="cta-now"><span class="cta-now-text">right now</span><span class="cta-now-highlight"></span></span></span>
+    <a href="upload.html" class="cta-banner-btn">add your designs</a>
+    <button class="cta-close" onclick="document.getElementById('cta-banner').classList.add('cta-banner--collapsed')" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <div class="blog-list" id="blog-list">
+    <div class="blog-hero">
+      <h1>Blog</h1>
+      <p>Thoughts on design, feedback, and building better products.</p>
+    </div>
+    <div class="blog-grid" id="blog-grid">
+      <div class="blog-loading">
+        <div class="skeleton-post">
+          <div class="skeleton-line" style="width:30%"></div>
+          <div class="skeleton-line" style="width:70%"></div>
+          <div class="skeleton-line" style="width:90%"></div>
+          <div class="skeleton-line" style="width:80%"></div>
+        </div>
+        <div class="skeleton-post">
+          <div class="skeleton-line" style="width:25%"></div>
+          <div class="skeleton-line" style="width:60%"></div>
+          <div class="skeleton-line" style="width:85%"></div>
+          <div class="skeleton-line" style="width:75%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-view" id="post-view">
+    <button class="back-btn" onclick="showList()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,2 4,7 9,12"/></svg>
+      All posts
+    </button>
+    <div id="post-view-bubbles"></div>
+  </div>
+
+  <canvas id="grid-pink" aria-hidden="true"></canvas>
+
+  <script type="module" src="auth.js"></script>
+
+  <script>
+    let posts = []
+    let page = 0
+    let hasMore = true
+    let loading = false
+
+    async function loadPosts() {
+      if (loading || !hasMore) return
+      loading = true
+      const res = await fetch(`/api/posts?page=${page}`)
+      const data = await res.json()
+      posts = posts.concat(data.posts)
+      hasMore = data.hasMore
+      page++
+      loading = false
+      renderList()
+      return data
+    }
+
+    function renderList() {
+      const grid = document.getElementById('blog-grid')
+      if (!posts.length) {
+        grid.innerHTML = '<div class="blog-empty">No posts yet — check back soon.</div>'
+        return
+      }
+      const cards = posts.map(post => `
+        <a class="post-card" href="#${post.slug.current}">
+          ${post.thumbUrl
+            ? `<img class="post-card-thumb" src="${post.thumbUrl}?w=240&h=240&fit=crop&auto=format" alt="">`
+            : `<div class="post-card-thumb-placeholder"></div>`}
+          <div class="post-card-body">
+            <div class="post-date">${formatDate(post.publishedAt)}</div>
+            <div class="post-title">${post.title}</div>
+            <div class="post-excerpt">${post.excerpt || ''}</div>
+            <span class="post-read-more">Read more →</span>
+          </div>
+        </a>
+      `).join('')
+      const loadMore = hasMore
+        ? `<button class="load-more-btn" onclick="loadPosts()">Load more</button>`
+        : ''
+      grid.innerHTML = cards + loadMore
+    }
+
+    async function showPost(slug) {
+      location.hash = slug
+      document.getElementById('blog-list').classList.add('hidden')
+      document.getElementById('post-view').classList.add('active')
+      document.getElementById('post-view-bubbles').innerHTML = '<div class="post-bubble" style="opacity:.4">Loading…</div>'
+      window.scrollTo(0, 0)
+
+      const res = await fetch(`/api/posts/${slug}`)
+      const post = await res.json()
+      const bubbles = []
+
+      bubbles.push(`
+        <div class="post-bubble post-bubble--title">
+          ${post.publishedAt ? `<div class="post-bubble-date">${formatDate(post.publishedAt)}</div>` : ''}
+          <div class="post-bubble-title">${post.title}</div>
+        </div>
+      `)
+
+      if (post.mainImageUrl) {
+        bubbles.push(`<div class="post-bubble post-bubble--image"><img src="${post.mainImageUrl}?w=1200&auto=format" alt=""></div>`)
+      }
+
+      if (post.body) {
+        for (const block of post.body) {
+          if (block._type === 'comparison') {
+            bubbles.push(renderComparison(block))
+          } else if (block._type === 'cta') {
+            bubbles.push(renderCta(block))
+          } else {
+            const html = renderBlock(block)
+            if (html) bubbles.push(`<div class="post-bubble">${html}</div>`)
+          }
+        }
+      }
+
+      document.getElementById('post-view-bubbles').innerHTML = bubbles.join('')
+
+      // Wire up comparisons after DOM insert
+      document.querySelectorAll('.comparison-bubble').forEach(el => {
+        const id = el.dataset.id
+        loadVotes(id, el)
+      })
+    }
+
+    function showList() {
+      history.pushState('', '', location.pathname)
+      document.getElementById('blog-list').classList.remove('hidden')
+      document.getElementById('post-view').classList.remove('active')
+      window.scrollTo(0, 0)
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return ''
+      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    }
+
+    function renderBlock(block) {
+      if (block._type === 'image' && block.url) {
+        return `<img src="${block.url}" alt="">`
+      }
+      if (block._type !== 'block') return ''
+      const text = (block.children || []).map(span => {
+        let t = (span.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        if (span.marks?.includes('strong')) t = `<strong>${t}</strong>`
+        if (span.marks?.includes('em')) t = `<em>${t}</em>`
+        return t
+      }).join('')
+      if (!text.trim()) return ''
+      const tag = block.style === 'h2' ? 'h2' : block.style === 'h3' ? 'h3' : 'p'
+      return `<${tag}>${text}</${tag}>`
+    }
+
+    function renderComparison(block) {
+      const id = block._key || (Math.random().toString(36).slice(2))
+      const question = block.question ? `<div class="comparison-question">${block.question}</div>` : ''
+      return `
+        <div class="comparison-bubble" data-id="${id}">
+          ${question}
+          <div class="comparison-grid">
+            <div class="comparison-option">
+              <div class="comparison-letter">A</div>
+              <button class="comparison-btn" data-choice="a" onclick="castVote('${id}', 'a', this)" ${block.imageAUrl ? '' : 'disabled'}>
+                ${block.imageAUrl ? `<img src="${block.imageAUrl}" alt="Design A">` : '<div style="height:120px;background:var(--cream-2)"></div>'}
+                <div class="comparison-bar" id="bar-a-${id}">
+                  <div class="comparison-bar-track"><div class="comparison-bar-fill" id="fill-a-${id}" style="width:0%"></div></div>
+                  <span class="comparison-bar-pct" id="pct-a-${id}">0%</span>
+                </div>
+              </button>
+            </div>
+            <div class="comparison-grid-or">or</div>
+            <div class="comparison-option">
+              <div class="comparison-letter">B</div>
+              <button class="comparison-btn" data-choice="b" onclick="castVote('${id}', 'b', this)" ${block.imageBUrl ? '' : 'disabled'}>
+                ${block.imageBUrl ? `<img src="${block.imageBUrl}" alt="Design B">` : '<div style="height:120px;background:var(--cream-2)"></div>'}
+                <div class="comparison-bar" id="bar-b-${id}">
+                  <div class="comparison-bar-track"><div class="comparison-bar-fill" id="fill-b-${id}" style="width:0%"></div></div>
+                  <span class="comparison-bar-pct" id="pct-b-${id}">0%</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      `
+    }
+
+    const CTA_COPY = {
+      vote:     { text: 'Vote on your favourite designs',           btn: 'Start voting' },
+      abtest:   { text: 'A/B test your designs for free',           btn: 'Try it free' },
+      feedback: { text: 'Share your design — get instant feedback', btn: 'Upload now' },
+      audience: { text: 'See what your audience really prefers',    btn: 'Get started' },
+    }
+
+    function renderCta(block) {
+      const { text, btn } = CTA_COPY[block.variant] || CTA_COPY.vote
+      return `
+        <div class="post-cta">
+          <span class="post-cta-text">${text}</span>
+          <a href="index.html" class="post-cta-btn">${btn}</a>
+        </div>
+      `
+    }
+
+    async function castVote(id, choice, btn) {
+      const bubble = btn.closest('.comparison-bubble')
+      if (bubble.classList.contains('comparison-voted')) return
+      bubble.classList.add('comparison-voted')
+      bubble.querySelectorAll('.comparison-btn').forEach(b => {
+        b.disabled = true
+        if (b.dataset.choice === choice) b.classList.add('chosen')
+      })
+      await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comparisonId: id, choice }),
+      })
+      loadVotes(id, bubble)
+    }
+
+    async function loadVotes(id, bubble) {
+      const res = await fetch(`/api/votes/${id}`)
+      const { a, b } = await res.json()
+      const total = a + b || 1
+      const pctA = Math.round(a / total * 100)
+      const pctB = Math.round(b / total * 100)
+
+      const fillA = document.getElementById(`fill-a-${id}`)
+      const fillB = document.getElementById(`fill-b-${id}`)
+      const pctAEl = document.getElementById(`pct-a-${id}`)
+      const pctBEl = document.getElementById(`pct-b-${id}`)
+      const barA = document.getElementById(`bar-a-${id}`)
+      const barB = document.getElementById(`bar-b-${id}`)
+
+      if (bubble.classList.contains('comparison-voted')) {
+        if (fillA) fillA.style.width = pctA + '%'
+        if (fillB) fillB.style.width = pctB + '%'
+        if (pctAEl) pctAEl.textContent = pctA + '%'
+        if (pctBEl) pctBEl.textContent = pctB + '%'
+        if (barA) barA.classList.add('visible')
+        if (barB) barB.classList.add('visible')
+      }
+    }
+
+    function handleHash() {
+      const slug = location.hash.slice(1)
+      if (slug) {
+        showPost(slug)
+      } else {
+        document.getElementById('blog-list').classList.remove('hidden')
+        document.getElementById('post-view').classList.remove('active')
+      }
+    }
+
+    window.addEventListener('hashchange', handleHash)
+
+    loadPosts().then(() => {
+      if (location.hash) handleHash()
+    })
+  </script>
+
+  <script>
+    (function () {
+      const CELL_W = 40, CELL_H = 40
+      const PAD = 0
+      const REVEAL_MS = 1400
+      const CREAM = '#FDFCF7'
+      const PAL = [
+        CREAM, CREAM, CREAM, CREAM, CREAM,
+        CREAM, CREAM, CREAM, CREAM, CREAM,
+        CREAM, '#fff0f8', '#ffe6f4', '#FFB9E5',
+      ]
+      const canvas = document.getElementById('grid-pink')
+      const ctx = canvas.getContext('2d')
+      let bgTiles = [], bgMaxDist = 0, revealRafId = null
+      function build() {
+        canvas.width  = window.innerWidth  + CELL_W * 2
+        canvas.height = window.innerHeight + CELL_H * 2
+        const cols = Math.ceil(canvas.width  / CELL_W) + 1
+        const rows = Math.ceil(canvas.height / CELL_H) + 1
+        bgTiles = []
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const dx = c - cols / 2, dy = r - rows / 2
+            bgTiles.push({ r, c, color: CREAM, dist: Math.sqrt(dx * dx + dy * dy), drawn: false })
+          }
+        }
+        bgMaxDist = Math.max(...bgTiles.map(t => t.dist))
+      }
+      function runTileReveal() {
+        if (revealRafId) cancelAnimationFrame(revealRafId)
+        for (const tile of bgTiles) { tile.color = PAL[Math.floor(Math.random() * PAL.length)]; tile.drawn = false }
+        const revealStart = performance.now()
+        function step(now) {
+          const p = Math.min((now - revealStart) / REVEAL_MS, 1)
+          const threshold = (1 - Math.pow(1 - p, 2.2)) * bgMaxDist
+          for (const tile of bgTiles) {
+            if (!tile.drawn && tile.dist <= threshold) {
+              tile.drawn = true
+              ctx.fillStyle = tile.color
+              ctx.fillRect(tile.c * CELL_W + PAD, tile.r * CELL_H + PAD, CELL_W - PAD * 2, CELL_H - PAD * 2)
+            }
+          }
+          if (p < 1) revealRafId = requestAnimationFrame(step)
+        }
+        revealRafId = requestAnimationFrame(step)
+      }
+      build(); runTileReveal()
+      window.addEventListener('resize', () => { build(); runTileReveal() })
+    })()
+  </script>
+</body>
+</html>

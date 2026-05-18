@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js'
 
+const ADMIN_ID = '039bf28c-3c9e-412c-9ccc-0774743be705'
 const $ = id => document.getElementById(id)
 
 async function init() {
@@ -7,6 +8,14 @@ async function init() {
   if (!session) {
     window.location.href = 'login.html'
     return
+  }
+
+  if (session.user.id === ADMIN_ID) {
+    const adminLink = document.createElement('a')
+    adminLink.href = 'admin.html'
+    adminLink.className = 'nav-link'
+    adminLink.textContent = 'Admin'
+    $('logout-btn').before(adminLink)
   }
 
   $('logout-btn').addEventListener('click', async () => {

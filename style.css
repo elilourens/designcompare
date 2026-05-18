@@ -558,12 +558,8 @@ body > * { position: relative; z-index: 3; }
 .design-card img {
   width: 100%;
   display: block;
-  object-fit: cover;
-  max-height: 60vh;
-}
-
-@media (max-width: 600px) {
-  .design-card img { max-height: 52vh; }
+  object-fit: contain;
+  background: var(--cream-2);
 }
 
 .design-card-wrap {

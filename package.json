@@ -4,6 +4,7 @@
     "dev": "bun run server.ts"
   },
   "dependencies": {
-    "@sanity/client": "^7.22.0"
+    "@sanity/client": "^7.22.0",
+    "@vercel/node": "^3.0.0"
   }
 }

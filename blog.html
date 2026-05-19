@@ -509,7 +509,12 @@
 
   <canvas id="grid-pink" aria-hidden="true"></canvas>
 
-  <script type="module" src="auth.js"></script>
+  <script type="module">
+    import { supabase } from './supabase.js'
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) document.getElementById('upload-link').classList.remove('hidden')
+    })
+  </script>
 
   <script>
     let posts = []
